@@ -172,11 +172,28 @@ const TrophyAnimation = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false)
   const [shouldExit, setShouldExit] = useState(false)
+  const [windowHeight, setWindowHeight] = useState(800) // Default fallback
+  const [videoError, setVideoError] = useState(false)
+  const [videoLoaded, setVideoLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  // Set window height on client side
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setWindowHeight(window.innerHeight)
+
+      const handleResize = () => {
+        setWindowHeight(window.innerHeight)
+      }
+
+      window.addEventListener("resize", handleResize)
+      return () => window.removeEventListener("resize", handleResize)
+    }
+  }, [])
+
   // Calculate animation states based on scroll position
-  const entryProgress = Math.max(0, Math.min(1, (scrollY - statsStart) / (window.innerHeight * 0.15)))
-  const exitProgress = Math.max(0, Math.min(1, (scrollY - statsMidpoint) / (window.innerHeight * 0.15)))
+  const entryProgress = Math.max(0, Math.min(1, (scrollY - statsStart) / (windowHeight * 0.15)))
+  const exitProgress = Math.max(0, Math.min(1, (scrollY - statsMidpoint) / (windowHeight * 0.15)))
 
   // Determine visibility based on scroll position
   const shouldBeVisible = scrollY >= statsStart && scrollY < statsMidpoint
@@ -200,17 +217,17 @@ const TrophyAnimation = ({
   // Simple video play/pause based on visibility
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
+    if (!video || videoError) return
 
-    if (isVisible && !shouldExit) {
+    if (isVisible && !shouldExit && videoLoaded) {
       video.currentTime = 0
-      video.play().catch(() => {
-        console.log("Video autoplay failed")
+      video.play().catch((error) => {
+        console.log("Video autoplay failed:", error)
       })
     } else {
       video.pause()
     }
-  }, [isVisible, shouldExit])
+  }, [isVisible, shouldExit, videoLoaded, videoError])
 
   // Calculate transform values with final tilt of ±23 degrees and better positioning
   const getTransform = () => {
@@ -235,6 +252,19 @@ const TrophyAnimation = ({
 
   const opacity = shouldExit ? 1 - exitProgress : isVisible ? entryProgress : 0
 
+  // Handle video errors
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    console.error("Video failed to load:", e.currentTarget.error)
+    setVideoError(true)
+  }
+
+  // Handle video load success
+  const handleVideoLoad = () => {
+    console.log("Video loaded successfully")
+    setVideoLoaded(true)
+    setVideoError(false)
+  }
+
   return (
     <div
       className={`fixed z-30 pointer-events-none transition-all duration-700 ease-out ${
@@ -246,20 +276,50 @@ const TrophyAnimation = ({
         opacity: opacity,
       }}
     >
-      <video
-        ref={videoRef}
-        muted
-        playsInline
-        loop
-        className={`w-96 h-96 md:w-128 md:h-128 lg:w-144 lg:h-144 object-contain drop-shadow-2xl ${
-          isVisible && !shouldExit ? "animate-trophy-loop" : ""
-        }`}
-        style={{
-          filter: "drop-shadow(0 10px 20px rgba(255, 215, 0, 0.3))",
-        }}
-      >
-        <source src={side === "left" ? "/wreath-trophy.webm" : "/nba-trophy.webm"} type="video/webm" />
-      </video>
+      {videoError ? (
+        // Fallback content when video fails to load
+        <div
+          className={`w-96 h-96 md:w-128 md:h-128 lg:w-144 lg:h-144 flex items-center justify-center ${
+            isVisible && !shouldExit ? "animate-trophy-loop" : ""
+          }`}
+          style={{
+            filter: "drop-shadow(0 10px 20px rgba(255, 215, 0, 0.3))",
+          }}
+        >
+          <div className="text-yellow-300 text-8xl animate-bounce">🏆</div>
+        </div>
+      ) : (
+        <video
+          ref={videoRef}
+          muted
+          playsInline
+          autoPlay
+          loop
+          preload="metadata"
+          className={`w-96 h-96 md:w-128 md:h-128 lg:w-144 lg:h-144 object-contain drop-shadow-2xl ${
+            isVisible && !shouldExit ? "animate-trophy-loop" : ""
+          }`}
+          style={{
+            filter: "drop-shadow(0 10px 20px rgba(255, 215, 0, 0.3))",
+          }}
+          onError={handleVideoError}
+          onLoadedData={handleVideoLoad}
+        >
+          {/* Primary WebM source */}
+          <source src={side === "left" ? "/wreath-trophy.webm" : "/nba-trophy.webm"} type="video/webm" />
+          {/* Fallback MP4 source */}
+          <source src={side === "left" ? "/wreath-trophy.mp4" : "/nba-trophy.mp4"} type="video/mp4" />
+          {/* Fallback content for browsers that don't support video */}
+          Your browser does not support the video tag.
+        </video>
+      )}
+
+      {/* Loading indicator */}
+      {!videoLoaded && !videoError && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-yellow-300 text-4xl animate-pulse">🏆</div>
+        </div>
+      )}
     </div>
   )
 }
@@ -275,6 +335,8 @@ export default function BasketballPortfolio() {
   const [scrollY, setScrollY] = useState(0)
   const [emailCopied, setEmailCopied] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
+  const [windowDimensions, setWindowDimensions] = useState({ width: 1024, height: 800 }) // Default fallbacks
+  const [isClient, setIsClient] = useState(false)
   const businessEmail = "contact@clutchtimeclips.com"
 
   const socialLinks: SocialLink[] = [
@@ -298,22 +360,53 @@ export default function BasketballPortfolio() {
     },
   ]
 
+  // Initialize client-side state
   useEffect(() => {
+    setIsClient(true)
+    if (typeof window !== "undefined") {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isClient) return
+
     let ticking = false
 
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          setScrollY(window.scrollY)
+          if (typeof window !== "undefined") {
+            setScrollY(window.scrollY)
+          }
           ticking = false
         })
         ticking = true
       }
     }
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    const handleResize = () => {
+      if (typeof window !== "undefined") {
+        setWindowDimensions({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        })
+      }
+    }
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll, { passive: true })
+      window.addEventListener("resize", handleResize)
+
+      return () => {
+        window.removeEventListener("scroll", handleScroll)
+        window.removeEventListener("resize", handleResize)
+      }
+    }
+  }, [isClient])
 
   const copyEmail = async () => {
     try {
@@ -325,38 +418,41 @@ export default function BasketballPortfolio() {
     }
   }
 
+  // Use windowDimensions instead of direct window access
+  const { width: windowWidth, height: windowHeight } = windowDimensions
+
   // Calculate scroll-based transformations
-  const balloonTransform = Math.max(0, scrollY - window.innerHeight * 0.12) // Start moving background at 12% scroll
-  const transitionStart = window.innerHeight * 0.11 // Start transition at 11% scroll
-  const videoStart = window.innerHeight * 0.18 // Start video at 18% scroll
-  const statsTextStart = window.innerHeight * 0.15 // Start "View Count" text at 15% scroll
-  const transitionEnd = window.innerHeight * 0.5 // End transition faster at 50% scroll
+  const balloonTransform = Math.max(0, scrollY - windowHeight * 0.12) // Start moving background at 12% scroll
+  const transitionStart = windowHeight * 0.11 // Start transition at 11% scroll
+  const videoStart = windowHeight * 0.18 // Start video at 18% scroll
+  const statsTextStart = windowHeight * 0.15 // Start "View Count" text at 15% scroll
+  const transitionEnd = windowHeight * 0.5 // End transition faster at 50% scroll
   const transitionProgress = Math.max(0, Math.min(1, (scrollY - transitionStart) / (transitionEnd - transitionStart)))
-  const statsTextProgress = Math.max(0, Math.min(1, (scrollY - statsTextStart) / (window.innerHeight * 0.3)))
+  const statsTextProgress = Math.max(0, Math.min(1, (scrollY - statsTextStart) / (windowHeight * 0.3)))
 
   // Background opacity calculations for faster transition
   const heroBackgroundOpacity = Math.max(0, 1 - transitionProgress * 1.5) // Faster fade out
   const videoBackgroundOpacity = Math.min(1, transitionProgress * 1.2) // Faster fade in
 
   // "View Count" text animation calculations
-  const ourStatsStart = window.innerHeight * 0.27 // Start at 27% viewport
-  const ourStatsEnd = window.innerHeight * 0.34 // Fully visible by 34% viewport
+  const ourStatsStart = windowHeight * 0.27 // Start at 27% viewport
+  const ourStatsEnd = windowHeight * 0.34 // Fully visible by 34% viewport
   const ourStatsProgress = Math.max(0, Math.min(1, (scrollY - ourStatsStart) / (ourStatsEnd - ourStatsStart)))
   const ourStatsOpacity = ourStatsProgress
   const ourStatsTransform = (1 - ourStatsProgress) * 50 // Start 50px below, move to 0
 
   // Trophy animation calculations - Updated timing with extended visibility
-  const isMobile = window.innerWidth < 768
+  const isMobile = windowWidth < 768
   const trophyStatsStart = isMobile
-    ? window.innerHeight * 0.27 // Mobile: Start at 15% into stats section (27% total viewport)
-    : window.innerHeight * 0.45 // Desktop: Start trophies at 45% viewport
+    ? windowHeight * 0.27 // Mobile: Start at 15% into stats section (27% total viewport)
+    : windowHeight * 0.45 // Desktop: Start trophies at 45% viewport
   const trophyStatsMidpoint = isMobile
-    ? window.innerHeight * 0.42 // Mobile: Exit at 40% into stats section (42% total viewport)
-    : window.innerHeight * 1.0 // Desktop: Exit at 100% viewport
+    ? windowHeight * 0.42 // Mobile: Exit at 40% into stats section (42% total viewport)
+    : windowHeight * 1.0 // Desktop: Exit at 100% viewport
 
   // Contact section animation calculations - positioned right after stats
-  const contactStart = window.innerHeight * 0.58 // Start further down after stats section
-  const contactEnd = window.innerHeight * 0.65 // Fully visible a bit later
+  const contactStart = windowHeight * 0.58 // Start further down after stats section
+  const contactEnd = windowHeight * 0.65 // Fully visible a bit later
   const contactProgress = Math.max(0, Math.min(1, (scrollY - contactStart) / (contactEnd - contactStart)))
   const contactOpacity = contactProgress
   const contactTransform = (1 - contactProgress) * 50
@@ -403,18 +499,22 @@ export default function BasketballPortfolio() {
         </nav>
 
         {/* Trophy Animations */}
-        <TrophyAnimation
-          side="left"
-          scrollY={scrollY}
-          statsStart={trophyStatsStart}
-          statsMidpoint={trophyStatsMidpoint}
-        />
-        <TrophyAnimation
-          side="right"
-          scrollY={scrollY}
-          statsStart={trophyStatsStart}
-          statsMidpoint={trophyStatsMidpoint}
-        />
+        {isClient && (
+          <>
+            <TrophyAnimation
+              side="left"
+              scrollY={scrollY}
+              statsStart={trophyStatsStart}
+              statsMidpoint={trophyStatsMidpoint}
+            />
+            <TrophyAnimation
+              side="right"
+              scrollY={scrollY}
+              statsStart={trophyStatsStart}
+              statsMidpoint={trophyStatsMidpoint}
+            />
+          </>
+        )}
 
         {/* Background Layers */}
         <div className="fixed inset-0 z-0">
@@ -468,10 +568,10 @@ export default function BasketballPortfolio() {
           >
             <video
               ref={(video) => {
-                if (video) {
+                if (video && isClient) {
                   // Calculate video progress based on scroll position
-                  const videoStart = window.innerHeight * 0.18
-                  const videoHeight = window.innerHeight * 1.5 // Reduced height to match content
+                  const videoStart = windowHeight * 0.18
+                  const videoHeight = windowHeight * 1.5 // Reduced height to match content
                   const scrollProgress = Math.max(0, Math.min(1, (scrollY - videoStart) / videoHeight))
 
                   // Set video time based on scroll progress
@@ -512,7 +612,7 @@ export default function BasketballPortfolio() {
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
                 <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
-                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <span className="text-xl font-bold text-white/62 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
                 <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
@@ -568,7 +668,7 @@ export default function BasketballPortfolio() {
           <div
             className="absolute text-center text-white z-20 w-full px-6"
             style={{
-              top: `${window.innerHeight * 0.27 + window.innerHeight * 0.5}px`, // Position at 27% + some offset for centering
+              top: `${windowHeight * 0.27 + windowHeight * 0.5}px`, // Position at 27% + some offset for centering
               opacity: ourStatsOpacity,
               transform: `translateY(${ourStatsTransform}px)`,
               transition: ourStatsProgress >= 1 ? "none" : "opacity 0.3s ease-out, transform 0.3s ease-out",
@@ -586,10 +686,7 @@ export default function BasketballPortfolio() {
               <div
                 className="grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2 mb-8 md:mb-10"
                 style={{
-                  opacity: Math.max(
-                    0,
-                    Math.min(1, (scrollY - window.innerHeight * 0.35) / (window.innerHeight * 0.08)),
-                  ),
+                  opacity: Math.max(0, Math.min(1, (scrollY - windowHeight * 0.35) / (windowHeight * 0.08))),
                 }}
               >
                 <div className="text-left md:text-center lg:text-left">
@@ -608,7 +705,7 @@ export default function BasketballPortfolio() {
                   <div className="text-2xl md:text-5xl font-bold text-white drop-shadow-md">
                     <AnimatedCounter
                       target={5000000}
-                      startScroll={window.innerHeight * 0.35}
+                      startScroll={windowHeight * 0.35}
                       currentScroll={scrollY}
                       suffix="+"
                       finalText="5 Million+"
@@ -621,7 +718,7 @@ export default function BasketballPortfolio() {
               <div
                 className="grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2 mb-8 md:mb-10"
                 style={{
-                  opacity: Math.max(0, Math.min(1, (scrollY - window.innerHeight * 0.4) / (window.innerHeight * 0.08))),
+                  opacity: Math.max(0, Math.min(1, (scrollY - windowHeight * 0.4) / (windowHeight * 0.08))),
                 }}
               >
                 <div className="text-left md:text-center lg:text-left">
@@ -640,7 +737,7 @@ export default function BasketballPortfolio() {
                   <div className="text-2xl md:text-5xl font-bold text-white drop-shadow-md">
                     <AnimatedCounter
                       target={12000000}
-                      startScroll={window.innerHeight * 0.4}
+                      startScroll={windowHeight * 0.4}
                       currentScroll={scrollY}
                       suffix="+"
                       finalText="12 Million+"
@@ -653,10 +750,7 @@ export default function BasketballPortfolio() {
               <div
                 className="grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2"
                 style={{
-                  opacity: Math.max(
-                    0,
-                    Math.min(1, (scrollY - window.innerHeight * 0.45) / (window.innerHeight * 0.08)),
-                  ),
+                  opacity: Math.max(0, Math.min(1, (scrollY - windowHeight * 0.45) / (windowHeight * 0.08))),
                 }}
               >
                 <div className="text-left md:text-center lg:text-left">
@@ -675,7 +769,7 @@ export default function BasketballPortfolio() {
                   <div className="text-2xl md:text-5xl font-bold text-white drop-shadow-md">
                     <AnimatedCounter
                       target={25000000}
-                      startScroll={window.innerHeight * 0.45}
+                      startScroll={windowHeight * 0.45}
                       currentScroll={scrollY}
                       suffix="+"
                       finalText="25 Million+"
