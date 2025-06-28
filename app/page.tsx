@@ -730,7 +730,7 @@ export default function BasketballPortfolio() {
               >
                 <div className="text-left md:text-center lg:text-left">
                   <h3
-                    className={`${isMobile ? 'text-2xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
+                    className={`${isMobile ? 'text-3xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
                     style={{
                       position: "relative",
                       transform: "translateZ(0)",
@@ -741,7 +741,7 @@ export default function BasketballPortfolio() {
                   </h3>
                 </div>
                 <div className="text-center md:text-center lg:text-right">
-                  <div className={`${isMobile ? 'text-xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
+                  <div className={`${isMobile ? 'text-2xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
                       target={5000000}
                       startScroll={isMobile ? windowHeight * 0.25 : windowHeight * 0.35}
@@ -762,7 +762,7 @@ export default function BasketballPortfolio() {
               >
                 <div className="text-left md:text-center lg:text-left">
                   <h3
-                    className={`${isMobile ? 'text-2xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
+                    className={`${isMobile ? 'text-3xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
                     style={{
                       position: "relative",
                       transform: "translateZ(0)",
@@ -773,7 +773,7 @@ export default function BasketballPortfolio() {
                   </h3>
                 </div>
                 <div className="text-center md:text-center lg:text-right">
-                  <div className={`${isMobile ? 'text-xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
+                  <div className={`${isMobile ? 'text-2xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
                       target={12000000}
                       startScroll={isMobile ? windowHeight * 0.28 : windowHeight * 0.4}
@@ -794,7 +794,7 @@ export default function BasketballPortfolio() {
               >
                 <div className="text-left md:text-center lg:text-left">
                   <h3
-                    className={`${isMobile ? 'text-2xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
+                    className={`${isMobile ? 'text-3xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
                     style={{
                       position: "relative",
                       transform: "translateZ(0)",
@@ -805,7 +805,7 @@ export default function BasketballPortfolio() {
                   </h3>
                 </div>
                 <div className="text-center md:text-center lg:text-right">
-                  <div className={`${isMobile ? 'text-xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
+                  <div className={`${isMobile ? 'text-2xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
                       target={25000000}
                       startScroll={isMobile ? windowHeight * 0.31 : windowHeight * 0.45}
