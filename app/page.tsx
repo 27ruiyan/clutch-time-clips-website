@@ -434,25 +434,35 @@ export default function BasketballPortfolio() {
   const heroBackgroundOpacity = Math.max(0, 1 - transitionProgress * 1.5) // Faster fade out
   const videoBackgroundOpacity = Math.min(1, transitionProgress * 1.2) // Faster fade in
 
-  // "View Count" text animation calculations
-  const ourStatsStart = windowHeight * 0.27 // Start at 27% viewport
-  const ourStatsEnd = windowHeight * 0.34 // Fully visible by 34% viewport
-  const ourStatsProgress = Math.max(0, Math.min(1, (scrollY - ourStatsStart) / (ourStatsEnd - ourStatsStart)))
-  const ourStatsOpacity = ourStatsProgress
-  const ourStatsTransform = (1 - ourStatsProgress) * 50 // Start 50px below, move to 0
-
-  // Trophy animation calculations - Updated timing with extended visibility
+  // Mobile detection
   const isMobile = windowWidth < 768
+
+  // Trophy animation calculations - Disable on mobile
   const trophyStatsStart = isMobile
-    ? windowHeight * 0.27 // Mobile: Start at 15% into stats section (27% total viewport)
+    ? undefined // Disable on mobile
     : windowHeight * 0.45 // Desktop: Start trophies at 45% viewport
   const trophyStatsMidpoint = isMobile
-    ? windowHeight * 0.42 // Mobile: Exit at 40% into stats section (42% total viewport)
+    ? undefined // Disable on mobile
     : windowHeight * 1.0 // Desktop: Exit at 100% viewport
 
+  // "View Count" text animation calculations
+  const ourStatsStart = isMobile 
+    ? windowHeight * 0.18 // Start earlier on mobile (18% vs 27%)
+    : windowHeight * 0.27 // Keep original desktop position
+  const ourStatsEnd = isMobile
+    ? windowHeight * 0.25 // Finish earlier on mobile  
+    : windowHeight * 0.34 // Keep original desktop position
+  const ourStatsProgress = Math.max(0, Math.min(1, (scrollY - ourStatsStart) / (ourStatsEnd - ourStatsStart)))
+  const ourStatsOpacity = ourStatsProgress
+  const ourStatsTransform = (1 - ourStatsProgress) * 50
+
   // Contact section animation calculations - positioned right after stats
-  const contactStart = windowHeight * 0.58 // Start further down after stats section
-  const contactEnd = windowHeight * 0.65 // Fully visible a bit later
+  const contactStart = isMobile
+    ? windowHeight * 0.38 // Much earlier on mobile
+    : windowHeight * 0.58 // Keep original desktop position
+  const contactEnd = isMobile
+    ? windowHeight * 0.45 // Finish earlier on mobile
+    : windowHeight * 0.65 // Keep original desktop position
   const contactProgress = Math.max(0, Math.min(1, (scrollY - contactStart) / (contactEnd - contactStart)))
   const contactOpacity = contactProgress
   const contactTransform = (1 - contactProgress) * 50
@@ -498,8 +508,8 @@ export default function BasketballPortfolio() {
           </div>
         </nav>
 
-        {/* Trophy Animations */}
-        {isClient && (
+        {/* Trophy Animations - Only render on desktop */}
+        {isClient && !isMobile && trophyStatsStart && trophyStatsMidpoint && (
           <>
             <TrophyAnimation
               side="left"
@@ -612,6 +622,28 @@ export default function BasketballPortfolio() {
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
                 <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
                 <span className="text-xl font-bold text-white/62 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
                 <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
@@ -664,48 +696,50 @@ export default function BasketballPortfolio() {
             </div>
           </section>
 
-          {/* View Count Text */}
+          {/* View Count Text - Adjusted positioning for mobile */}
           <div
             className="absolute text-center text-white z-20 w-full px-6"
             style={{
-              top: `${windowHeight * 0.27 + windowHeight * 0.5}px`, // Position at 27% + some offset for centering
+              top: isMobile 
+                ? `${windowHeight * 0.88}px` // Much closer to hero on mobile
+                : `${windowHeight * 0.27 + windowHeight * 0.5}px`, // Keep original desktop position
               opacity: ourStatsOpacity,
               transform: `translateY(${ourStatsTransform}px)`,
               transition: ourStatsProgress >= 1 ? "none" : "opacity 0.3s ease-out, transform 0.3s ease-out",
             }}
           >
-            <h2 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+            <h2 className={`${isMobile ? 'text-4xl' : 'text-6xl md:text-8xl'} font-bold bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]`}>
               View Count
             </h2>
           </div>
 
-          {/* Statistics Section */}
-          <section id="stats-section" className="relative flex items-start justify-center px-6 pt-32 pb-24">
+          {/* Statistics Section - Reduced padding on mobile */}
+          <section id="stats-section" className={`relative flex items-start justify-center px-6 ${isMobile ? 'pt-16 pb-12' : 'pt-32 pb-24'}`}>
             <div className="w-full max-w-2xl mx-auto">
               {/* TikTok Stats */}
               <div
-                className="grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2 mb-8 md:mb-10"
+                className={`grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2 ${isMobile ? 'mb-6' : 'mb-8 md:mb-10'}`}
                 style={{
-                  opacity: Math.max(0, Math.min(1, (scrollY - windowHeight * 0.35) / (windowHeight * 0.08))),
+                  opacity: Math.max(0, Math.min(1, (scrollY - (isMobile ? windowHeight * 0.25 : windowHeight * 0.35)) / (windowHeight * 0.08))),
                 }}
               >
                 <div className="text-left md:text-center lg:text-left">
                   <h3
-                    className="text-3xl md:text-6xl font-bold text-white drop-shadow-md md:ml-0 lg:ml-0"
+                    className={`${isMobile ? 'text-2xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
                     style={{
                       position: "relative",
-                      transform: "translateZ(0)", // Force hardware acceleration to prevent layout shifts
-                      willChange: "auto", // Prevent unnecessary repaints
+                      transform: "translateZ(0)",
+                      willChange: "auto",
                     }}
                   >
                     TikTok
                   </h3>
                 </div>
                 <div className="text-center md:text-center lg:text-right">
-                  <div className="text-2xl md:text-5xl font-bold text-white drop-shadow-md">
+                  <div className={`${isMobile ? 'text-xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
                       target={5000000}
-                      startScroll={windowHeight * 0.35}
+                      startScroll={isMobile ? windowHeight * 0.25 : windowHeight * 0.35}
                       currentScroll={scrollY}
                       suffix="+"
                       finalText="5 Million+"
@@ -716,28 +750,28 @@ export default function BasketballPortfolio() {
 
               {/* YouTube Stats */}
               <div
-                className="grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2 mb-8 md:mb-10"
+                className={`grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2 ${isMobile ? 'mb-6' : 'mb-8 md:mb-10'}`}
                 style={{
-                  opacity: Math.max(0, Math.min(1, (scrollY - windowHeight * 0.4) / (windowHeight * 0.08))),
+                  opacity: Math.max(0, Math.min(1, (scrollY - (isMobile ? windowHeight * 0.28 : windowHeight * 0.4)) / (windowHeight * 0.08))),
                 }}
               >
                 <div className="text-left md:text-center lg:text-left">
                   <h3
-                    className="text-3xl md:text-6xl font-bold text-white drop-shadow-md md:ml-0 lg:ml-0"
+                    className={`${isMobile ? 'text-2xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
                     style={{
                       position: "relative",
-                      transform: "translateZ(0)", // Force hardware acceleration to prevent layout shifts
-                      willChange: "auto", // Prevent unnecessary repaints
+                      transform: "translateZ(0)",
+                      willChange: "auto",
                     }}
                   >
                     YouTube
                   </h3>
                 </div>
                 <div className="text-center md:text-center lg:text-right">
-                  <div className="text-2xl md:text-5xl font-bold text-white drop-shadow-md">
+                  <div className={`${isMobile ? 'text-xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
                       target={12000000}
-                      startScroll={windowHeight * 0.4}
+                      startScroll={isMobile ? windowHeight * 0.28 : windowHeight * 0.4}
                       currentScroll={scrollY}
                       suffix="+"
                       finalText="12 Million+"
@@ -750,26 +784,26 @@ export default function BasketballPortfolio() {
               <div
                 className="grid grid-cols-2 items-center gap-0 md:grid-cols-1 md:justify-center md:gap-1 lg:grid-cols-2 lg:gap-2"
                 style={{
-                  opacity: Math.max(0, Math.min(1, (scrollY - windowHeight * 0.45) / (windowHeight * 0.08))),
+                  opacity: Math.max(0, Math.min(1, (scrollY - (isMobile ? windowHeight * 0.31 : windowHeight * 0.45)) / (windowHeight * 0.08))),
                 }}
               >
                 <div className="text-left md:text-center lg:text-left">
                   <h3
-                    className="text-3xl md:text-6xl font-bold text-white drop-shadow-md md:ml-0 lg:ml-0"
+                    className={`${isMobile ? 'text-2xl' : 'text-3xl md:text-6xl'} font-bold text-white drop-shadow-md md:ml-0 lg:ml-0`}
                     style={{
                       position: "relative",
-                      transform: "translateZ(0)", // Force hardware acceleration to prevent layout shifts
-                      willChange: "auto", // Prevent unnecessary repaints
+                      transform: "translateZ(0)",
+                      willChange: "auto",
                     }}
                   >
                     Instagram
                   </h3>
                 </div>
                 <div className="text-center md:text-center lg:text-right">
-                  <div className="text-2xl md:text-5xl font-bold text-white drop-shadow-md">
+                  <div className={`${isMobile ? 'text-xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
                       target={25000000}
-                      startScroll={windowHeight * 0.45}
+                      startScroll={isMobile ? windowHeight * 0.31 : windowHeight * 0.45}
                       currentScroll={scrollY}
                       suffix="+"
                       finalText="25 Million+"
@@ -780,9 +814,9 @@ export default function BasketballPortfolio() {
             </div>
           </section>
 
-          {/* Contact Section - Directly below stats */}
+          {/* Contact Section - Moved up significantly on mobile */}
           <section
-            className="relative flex items-center justify-center px-6 py-20 mt-8"
+            className={`relative flex items-center justify-center px-6 ${isMobile ? 'py-12 mt-4' : 'py-20 mt-8'}`}
             style={{
               opacity: contactOpacity,
               transform: `translateY(${contactTransform}px)`,
@@ -790,12 +824,15 @@ export default function BasketballPortfolio() {
             }}
           >
             <div className="w-full max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+              <div className={`grid grid-cols-1 ${isMobile ? 'gap-8' : 'md:grid-cols-2 gap-12 md:gap-16'}`}>
                 <EmailCopy email="contact@clutchtimeclips.com" label="Want to work with us?" />
                 <EmailCopy email="support@clutchtimeclips.com" label="Have questions?" />
               </div>
             </div>
           </section>
+
+          {/* Add bottom padding to prevent cut-off on mobile */}
+          <div className={`${isMobile ? 'h-16' : 'h-32'}`}></div>
         </div>
 
         {/* Custom Styles */}
