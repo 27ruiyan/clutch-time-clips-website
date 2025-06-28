@@ -68,22 +68,24 @@ const AnimatedCounter = ({
     const digits = fullNumber.split("")
 
     return (
-      <div className="relative inline-block">
-        {digits.map((digit, index) => (
-          <span
-            key={index}
-            className={`inline-block transition-all duration-200 ${
-              showFinalText ? "transform scale-0 opacity-0" : "transform scale-100 opacity-100"
-            }`}
-            style={{
-              transitionDelay: showFinalText ? `${index * 100}ms` : "0ms",
-            }}
-          >
-            {digit}
-          </span>
-        ))}
+      <div className="relative w-full">
+        <div className="flex justify-end md:justify-center lg:justify-end">
+          {digits.map((digit, index) => (
+            <span
+              key={index}
+              className={`inline-block transition-all duration-200 ${
+                showFinalText ? "transform scale-0 opacity-0" : "transform scale-100 opacity-100"
+              }`}
+              style={{
+                transitionDelay: showFinalText ? `${index * 100}ms` : "0ms",
+              }}
+            >
+              {digit}
+            </span>
+          ))}
+        </div>
         <div
-          className={`absolute top-0 left-0 transition-all duration-500 ${
+          className={`absolute top-0 left-0 w-full flex justify-end md:justify-center lg:justify-end transition-all duration-500 ${
             showFinalText
               ? "transform translate-x-0 opacity-100 animate-float-subtle"
               : "transform translate-x-full opacity-0"
@@ -99,16 +101,7 @@ const AnimatedCounter = ({
   }
 
   return (
-    <div
-      className="relative overflow-visible"
-      style={{
-        minWidth: "280px", // Reserve space for the largest expected number
-        minHeight: "1.2em",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <div className="relative w-full">
       {renderDigitByDigitCollapse()}
     </div>
   )
@@ -610,6 +603,18 @@ export default function BasketballPortfolio() {
             {/* Scrolling Banner */}
             <div className="absolute top-0 left-0 w-full overflow-hidden py-4 z-20">
               <div className="whitespace-nowrap animate-scroll-infinite flex items-center">
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
+                <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
+                <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
                 <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
                 <img src="/rodman-player.png" alt="Basketball player" className="h-16 mx-4 inline-block" />
                 <span className="text-xl font-bold text-white/60 mx-8">Edits ~ Top 5 Moments ~ Custom Mixtapes</span>
