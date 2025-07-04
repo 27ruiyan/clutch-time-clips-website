@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: 'Clutch Time Clips',
   description: '',
   generator: '',
+  icons: {
+    icon:'/favicon_CTC.ico'
+  }
+  
 }
 
 export default function RootLayout({
