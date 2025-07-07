@@ -779,7 +779,7 @@ export default function BasketballPortfolio() {
                       startScroll={isMobile ? windowHeight * 0.28 : windowHeight * 0.4}
                       currentScroll={scrollY}
                       suffix="+"
-                      finalText="12 Million+"
+                      finalText="18 Million+"
                     />
                   </div>
                 </div>
@@ -811,7 +811,7 @@ export default function BasketballPortfolio() {
                       startScroll={isMobile ? windowHeight * 0.31 : windowHeight * 0.45}
                       currentScroll={scrollY}
                       suffix="+"
-                      finalText="25 Million+"
+                      finalText="32 Million+"
                     />
                   </div>
                 </div>

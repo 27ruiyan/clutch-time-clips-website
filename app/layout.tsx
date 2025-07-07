@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: '',
   generator: '',
   icons: {
-    icon:'/favicon_CTC.ico'
+    icon:'/favicon.ico'
   }
   
 }
