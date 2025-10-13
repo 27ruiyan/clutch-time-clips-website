@@ -775,11 +775,11 @@ export default function BasketballPortfolio() {
                 <div className="text-center md:text-center lg:text-right">
                   <div className={`${isMobile ? 'text-2xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
-                      target={20000000}
+                      target={35000000}
                       startScroll={isMobile ? windowHeight * 0.28 : windowHeight * 0.4}
                       currentScroll={scrollY}
                       suffix="+"
-                      finalText="20 Million+"
+                      finalText="35 Million+"
                     />
                   </div>
                 </div>
@@ -807,11 +807,11 @@ export default function BasketballPortfolio() {
                 <div className="text-center md:text-center lg:text-right">
                   <div className={`${isMobile ? 'text-2xl' : 'text-2xl md:text-5xl'} font-bold text-white drop-shadow-md`}>
                     <AnimatedCounter
-                      target={40000000}
+                      target={45000000}
                       startScroll={isMobile ? windowHeight * 0.31 : windowHeight * 0.45}
                       currentScroll={scrollY}
                       suffix="+"
-                      finalText="40 Million+"
+                      finalText="45 Million+"
                     />
                   </div>
                 </div>
